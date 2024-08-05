@@ -11,23 +11,21 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <main className="text-foreground bg-background">
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Main />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </main>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Main />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 

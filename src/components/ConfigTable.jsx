@@ -12,15 +12,33 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useAsyncList } from "@react-stately/data";
-import DeleteIcon from "./icons/DeleteIcon"; // Import the DeleteIcon component
+import {
+  getConfigurations,
+  deleteConfiguration,
+  createConfiguration,
+  updateConfiguration,
+} from "../services/api";
+import DeleteIcon from "./icons/DeleteIcon";
 import EditIcon from "./EditIcon";
-import BuildingIcon from "./icons/BuildingIcon"; // Import the BuildingIcon component
+import BuildingIcon from "./icons/BuildingIcon";
+import ConfigModal from "./ConfigModal";
+import { useDisclosure } from "@nextui-org/react";
 
-const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
+const ConfigTable = () => {
+  const [configurations, setConfigurations] = useState([]);
+  const [newConfig, setNewConfig] = useState({
+    buildingType: "",
+    buildingCost: "",
+    constructionTime: "",
+  });
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const list = useAsyncList({
     async load() {
+      const response = await getConfigurations();
       return {
-        items: configurations,
+        items: response.data,
       };
     },
     async sort({ items, sortDescriptor }) {
@@ -42,8 +60,67 @@ const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
   });
 
   useEffect(() => {
-    list.reload();
-  }, [configurations]);
+    fetchConfigurations();
+  }, []);
+
+  const fetchConfigurations = async () => {
+    try {
+      const response = await getConfigurations();
+      setConfigurations(response.data);
+      list.setItems(response.data);
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
+  const handleAuthError = (error) => {
+    if (error.response && error.response.status === 401) {
+      handleLogout();
+    } else {
+      console.error(error);
+    }
+  };
+
+  const handleAdd = async () => {
+    try {
+      await createConfiguration(newConfig);
+      fetchConfigurations(); // Fetch updated configurations
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await updateConfiguration(newConfig.buildingType, {
+        buildingCost: newConfig.buildingCost,
+        constructionTime: newConfig.constructionTime,
+      });
+      fetchConfigurations(); // Fetch updated configurations
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const handleEdit = (config) => {
+    setNewConfig(config);
+    setIsEditMode(true);
+    onOpen();
+  };
+
+  const handleDelete = async (buildingType) => {
+    try {
+      await deleteConfiguration(buildingType);
+      fetchConfigurations(); // Fetch updated configurations
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
 
   const renderCell = (config, columnKey) => {
     const cellValue = config[columnKey];
@@ -58,14 +135,14 @@ const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
       case "actions":
         return (
           <div className="flex justify-center gap-2">
-            <span className="cursor-pointer" onClick={() => onEdit(config)}>
-              <EditIcon /> {/* Use the EditIcon component */}
+            <span className="cursor-pointer" onClick={() => handleEdit(config)}>
+              <EditIcon />
             </span>
             <span
               className="text-danger cursor-pointer"
-              onClick={() => onDelete(config.buildingType)}
+              onClick={() => handleDelete(config.buildingType)}
             >
-              <DeleteIcon /> {/* Use the DeleteIcon component */}
+              <DeleteIcon />
             </span>
           </div>
         );
@@ -76,7 +153,6 @@ const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4"></div>
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <Input placeholder="Search Configurations" clearable />
@@ -87,7 +163,13 @@ const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
           </Select>
         </div>
         <div className="flex gap-2">
-          <Button color="primary" onPress={onAdd}>
+          <Button
+            color="success"
+            onPress={() => {
+              setIsEditMode(false);
+              onOpen();
+            }}
+          >
             Add Configuration
           </Button>
           <Button color="secondary">Export Data</Button>
@@ -142,6 +224,16 @@ const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
           )}
         </TableBody>
       </Table>
+      <ConfigModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        newConfig={newConfig}
+        setNewConfig={setNewConfig}
+        handleAdd={handleAdd}
+        handleUpdate={handleUpdate}
+        configurations={configurations}
+        isEditMode={isEditMode}
+      />
     </div>
   );
 };

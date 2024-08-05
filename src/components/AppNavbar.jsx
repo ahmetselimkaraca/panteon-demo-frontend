@@ -13,6 +13,7 @@ import SearchIcon from "./icons/SearchIcon";
 import GithubIcon from "./icons/GithubIcon";
 
 import UserDropdown from "./UserDropdown";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const AppNavbar = () => {
   return (
@@ -32,6 +33,9 @@ const AppNavbar = () => {
           <Link className="text-foreground" href="https://github.com">
             <GithubIcon />
           </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <ThemeSwitcher />
         </NavbarItem>
         <NavbarItem>
           <UserDropdown />

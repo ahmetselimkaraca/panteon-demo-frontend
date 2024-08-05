@@ -1,3 +1,4 @@
+// src/components/ConfigModal.jsx
 import React, { useEffect, useState } from "react";
 import {
   Modal,
@@ -9,12 +10,9 @@ import {
   Select,
   SelectItem,
   Input,
-  Card,
-  CardHeader,
-  CardBody,
-  Divider,
 } from "@nextui-org/react";
 import { getBuildingTypes } from "../services/api";
+import ConfigCard from "./ConfigCard";
 
 const ConfigModal = ({
   isOpen,
@@ -31,6 +29,7 @@ const ConfigModal = ({
     buildingCost: false,
     constructionTime: false,
   });
+  const [originalConfig, setOriginalConfig] = useState(newConfig); // Store the original configuration
 
   useEffect(() => {
     const fetchBuildingTypes = async () => {
@@ -44,6 +43,12 @@ const ConfigModal = ({
 
     fetchBuildingTypes();
   }, []);
+
+  useEffect(() => {
+    if (isOpen && isEditMode) {
+      setOriginalConfig(newConfig); // Store the original configuration when modal is opened
+    }
+  }, [isOpen, isEditMode]);
 
   const validateBuildingCost = (value) => value > 0;
   const validateConstructionTime = (value) => value >= 30 && value <= 1800;
@@ -89,21 +94,10 @@ const ConfigModal = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {isEditMode ? "Edit Configuration" : "Add New Building Type"}
+              {isEditMode ? "Edit Configuration" : "Add Configuration"}
             </ModalHeader>
             <ModalBody>
-              {isEditMode && (
-                <Card className="max-w-[400px] mb-4">
-                  <CardHeader>
-                    <h3>{newConfig.buildingType}</h3>
-                  </CardHeader>
-                  <Divider />
-                  <CardBody>
-                    <p>Building Cost: ${newConfig.buildingCost}</p>
-                    <p>Construction Time: {newConfig.constructionTime} mins</p>
-                  </CardBody>
-                </Card>
-              )}
+              {isEditMode && <ConfigCard config={originalConfig} />}
               {!isEditMode && (
                 <Select
                   label="Select a building type"
