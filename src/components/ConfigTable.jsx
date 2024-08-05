@@ -6,12 +6,17 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Button,
+  Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { useAsyncList } from "@react-stately/data";
-import DeleteIcon from "./DeleteIcon"; // Import the DeleteIcon component
+import DeleteIcon from "./icons/DeleteIcon"; // Import the DeleteIcon component
 import EditIcon from "./EditIcon";
+import BuildingIcon from "./icons/BuildingIcon"; // Import the BuildingIcon component
 
-const ConfigTable = ({ configurations, onEdit, onDelete }) => {
+const ConfigTable = ({ configurations, onEdit, onDelete, onAdd }) => {
   const list = useAsyncList({
     async load() {
       return {
@@ -70,43 +75,74 @@ const ConfigTable = ({ configurations, onEdit, onDelete }) => {
   };
 
   return (
-    <Table
-      aria-label="Configurations Table with Actions"
-      sortDescriptor={list.sortDescriptor}
-      onSortChange={list.sort}
-      className="w-2/3"
-    >
-      <TableHeader>
-        <TableColumn key="buildingType" allowsSorting align="center">
-          Building Type
-        </TableColumn>
-        <TableColumn key="buildingCost" allowsSorting align="center">
-          Building Cost
-        </TableColumn>
-        <TableColumn key="constructionTime" allowsSorting align="center">
-          Construction Time
-        </TableColumn>
-        <TableColumn key="actions" align="center">
-          Actions
-        </TableColumn>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {(item) => (
-          <TableRow key={item.buildingType}>
-            {[
-              "buildingType",
-              "buildingCost",
-              "constructionTime",
-              "actions",
-            ].map((columnKey) => (
-              <TableCell key={columnKey} className="text-center">
-                {renderCell(item, columnKey)}
-              </TableCell>
-            ))}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-4"></div>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <Input placeholder="Search Configurations" clearable />
+          <Select placeholder="Filter by Type" fullWidth>
+            <SelectItem key="type1">Type 1</SelectItem>
+            <SelectItem key="type2">Type 2</SelectItem>
+            <SelectItem key="type3">Type 3</SelectItem>
+          </Select>
+        </div>
+        <div className="flex gap-2">
+          <Button color="primary" onPress={onAdd}>
+            Add Configuration
+          </Button>
+          <Button color="secondary">Export Data</Button>
+        </div>
+      </div>
+      <Table
+        aria-label="Configurations Table with Actions"
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}
+        className=""
+      >
+        <TableHeader>
+          <TableColumn key="buildingType" allowsSorting align="center">
+            <div className="flex items-center justify-center gap-1">
+              <span>Building Type</span>
+              <BuildingIcon className="text-danger" />
+            </div>
+          </TableColumn>
+          <TableColumn key="buildingCost" allowsSorting align="center">
+            <div className="flex items-center justify-center gap-1">
+              <span>Building Cost</span>
+              <BuildingIcon className="text-danger" />
+            </div>
+          </TableColumn>
+          <TableColumn key="constructionTime" allowsSorting align="center">
+            <div className="flex items-center justify-center gap-1">
+              <span>Construction Time</span>
+              <BuildingIcon className="text-danger" />
+            </div>
+          </TableColumn>
+          <TableColumn key="actions" align="center">
+            <div className="flex items-center justify-center gap-1">
+              <span>Actions</span>
+              <BuildingIcon className="text-danger" />
+            </div>
+          </TableColumn>
+        </TableHeader>
+        <TableBody items={list.items}>
+          {(item) => (
+            <TableRow key={item.buildingType}>
+              {[
+                "buildingType",
+                "buildingCost",
+                "constructionTime",
+                "actions",
+              ].map((columnKey) => (
+                <TableCell key={columnKey} className="text-center">
+                  {renderCell(item, columnKey)}
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

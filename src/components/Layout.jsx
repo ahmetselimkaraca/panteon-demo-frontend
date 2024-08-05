@@ -1,12 +1,15 @@
-// src/components/Layout.js
 import React from "react";
 import AppNavbar from "./AppNavbar";
+import Sidebar from "./Sidebar";
 
 const Layout = ({ children }) => {
   return (
-    <div>
-      <AppNavbar />
-      <main>{children}</main>
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1">
+        <AppNavbar />
+        <main className="p-4">{children}</main>
+      </div>
     </div>
   );
 };

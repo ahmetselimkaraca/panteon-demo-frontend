@@ -1,3 +1,4 @@
+// Main.jsx
 import { useEffect, useState } from "react";
 import {
   getConfigurations,
@@ -6,7 +7,7 @@ import {
   updateConfiguration,
 } from "../services/api";
 import ConfigTable from "../components/ConfigTable";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@nextui-org/react";
 import ConfigModal from "../components/ConfigModal";
 
 function Main() {
@@ -88,33 +89,27 @@ function Main() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col">
+    <div className="h-full flex justify-center flex-col">
+      <h1 className="text-2xl font-bold mb-4">Configurations</h1>
       <ConfigTable
         configurations={configurations}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onAdd={() => {
+          setIsEditMode(false);
+          onOpen();
+        }} // Pass the onAdd handler to ConfigTable
       />
-      <div className="flex flex-col items-center justify-center">
-        <Button
-          onPress={() => {
-            setIsEditMode(false);
-            onOpen();
-          }}
-          className="m-4"
-        >
-          Add New Building Type
-        </Button>
-        <ConfigModal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          newConfig={newConfig}
-          setNewConfig={setNewConfig}
-          handleAdd={handleAdd}
-          handleUpdate={handleUpdate}
-          configurations={configurations} // Pass configurations to the modal
-          isEditMode={isEditMode} // Pass edit mode status to the modal
-        />
-      </div>
+      <ConfigModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        newConfig={newConfig}
+        setNewConfig={setNewConfig}
+        handleAdd={handleAdd}
+        handleUpdate={handleUpdate}
+        configurations={configurations} // Pass configurations to the modal
+        isEditMode={isEditMode} // Pass edit mode status to the modal
+      />
     </div>
   );
 }

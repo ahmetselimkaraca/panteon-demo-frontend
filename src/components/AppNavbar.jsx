@@ -4,46 +4,37 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  Input,
   Link,
-  Button,
+  User,
 } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
+
+import SearchIcon from "./icons/SearchIcon";
+import GithubIcon from "./icons/GithubIcon";
+
+import UserDropdown from "./UserDropdown";
 
 const AppNavbar = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   return (
-    <Navbar isBordered>
-      <NavbarBrand>
-        <p className="font-bold text-inherit">My App</p>
-      </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+    <Navbar isBordered className="" maxWidth="full">
+      <NavbarContent justify="start">
         <NavbarItem>
-          <Link color="foreground" href="/home">
-            Home
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/about">
-            About
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/contact">
-            Contact
-          </Link>
+          <Input
+            startContent={<SearchIcon />}
+            clearable
+            placeholder="Search..."
+            className="hidden sm:flex"
+          />
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button onClick={handleLogout} color="primary" variant="flat">
-            Logout
-          </Button>
+          <Link className="text-foreground" href="https://github.com">
+            <GithubIcon />
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <UserDropdown />
         </NavbarItem>
       </NavbarContent>
     </Navbar>
