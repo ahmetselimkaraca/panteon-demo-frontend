@@ -7,11 +7,14 @@ import {
   DropdownItem,
   Avatar,
 } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 
 const UserDropdown = () => {
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
@@ -24,7 +27,7 @@ const UserDropdown = () => {
           size="md"
         />
       </DropdownTrigger>
-      <DropdownMenu aria-label="User Actions">
+      <DropdownMenu aria-label="User Actions" variant="flat">
         <DropdownItem
           key="logout"
           className="text-danger"

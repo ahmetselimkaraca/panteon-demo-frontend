@@ -20,7 +20,12 @@ export default {
       themes: {
         light: {
           colors: {
-            background: "#ffffff",
+            background: "#fefefe",
+          },
+        },
+        dark: {
+          colors: {
+            background: "#101010",
           },
         },
       },

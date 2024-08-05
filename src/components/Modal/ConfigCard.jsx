@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
-import CurrencyIcon from "./icons/CurrencyIcon";
-import TimeIcon from "./icons/TimeIcon";
+import CurrencyIcon from "../icons/CurrencyIcon";
+import TimeIcon from "../icons/TimeIcon";
 
-import Academy from "../assets/academy.png";
-import Farm from "../assets/farm.png";
-import Barracks from "../assets/barracks.png";
-import Headquarters from "../assets/headquarters.png";
-import LumberMill from "../assets/lumbermill.png";
+import Academy from "../../assets/buildings/academy.png";
+import Farm from "../../assets/buildings/farm.png";
+import Barracks from "../../assets/buildings/barracks.png";
+import Headquarters from "../../assets/buildings/headquarters.png";
+import LumberMill from "../../assets/buildings/lumbermill.png";
 
 const ConfigCard = ({ config }) => {
   const buildingTypeToImage = {

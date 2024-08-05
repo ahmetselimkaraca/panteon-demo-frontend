@@ -11,26 +11,30 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useAsyncList } from "@react-stately/data";
 import {
   getConfigurations,
   deleteConfiguration,
   createConfiguration,
   updateConfiguration,
-} from "../services/api";
+} from "../../services/api";
 
-import ConfigModal from "./ConfigModal";
-import ViewConfigModal from "./ViewConfigModal";
+import ConfigModal from "../Modal/ConfigModal";
+import ViewConfigModal from "../Modal/ViewConfigModal";
 import DeleteConfirmationPopover from "./DeleteConfirmationPopover";
 import TableSkeleton from "./TableSkeleton";
 import { useDisclosure } from "@nextui-org/react";
 
-import EditIcon from "./icons/EditIcon";
-import ViewIcon from "./icons/ViewIcon";
+import EditIcon from "../icons/EditIcon";
+import ViewIcon from "../icons/ViewIcon";
 
 const ConfigTable = () => {
   const [loading, setLoading] = useState(false);
   const [configurations, setConfigurations] = useState([]);
+  const [sortedConfigurations, setSortedConfigurations] = useState([]);
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: "buildingType",
+    direction: "ascending",
+  });
   const [newConfig, setNewConfig] = useState({
     buildingType: "",
     buildingCost: "",
@@ -41,72 +45,29 @@ const ConfigTable = () => {
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [viewConfig, setViewConfig] = useState(null);
 
-  const list = useAsyncList({
-    async load() {
+  const fetchConfigurations = async () => {
+    try {
+      setLoading(true);
       const response = await getConfigurations();
-      return {
-        items: response.data,
-      };
-    },
-    async sort({ items, sortDescriptor }) {
-      return {
-        items: items.sort((a, b) => {
-          let first = a[sortDescriptor.column];
-          let second = b[sortDescriptor.column];
-          let cmp =
-            (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-
-          if (sortDescriptor.direction === "descending") {
-            cmp *= -1;
-          }
-
-          return cmp;
-        }),
-      };
-    },
-  });
+      setConfigurations(response.data);
+      setSortedConfigurations(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchConfigurations();
   }, []);
-
-  useEffect(() => {
-    list.reload();
-  }, [configurations]);
-
-  const fetchConfigurations = async () => {
-    try {
-      setLoading(true);
-      // sleep for 1 second to show skeleton loader
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      const response = await getConfigurations();
-      setConfigurations(response.data);
-      setLoading(false);
-    } catch (error) {
-      handleAuthError(error);
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
-
-  const handleAuthError = (error) => {
-    if (error.response && error.response.status === 401) {
-      handleLogout();
-    } else {
-      console.error(error);
-    }
-  };
 
   const handleAdd = async () => {
     try {
       await createConfiguration(newConfig);
       fetchConfigurations(); // Fetch updated configurations
     } catch (error) {
-      handleAuthError(error);
+      console.error(error);
     }
   };
 
@@ -118,7 +79,7 @@ const ConfigTable = () => {
       });
       fetchConfigurations(); // Fetch updated configurations
     } catch (error) {
-      handleAuthError(error);
+      console.error(error);
     }
   };
 
@@ -133,7 +94,7 @@ const ConfigTable = () => {
       await deleteConfiguration(buildingType);
       fetchConfigurations(); // Fetch updated configurations
     } catch (error) {
-      handleAuthError(error);
+      console.error(error);
     }
   };
 
@@ -147,6 +108,23 @@ const ConfigTable = () => {
     setIsEditMode(true);
     setIsViewOpen(false);
     onOpen();
+  };
+
+  const handleSortChange = (descriptor) => {
+    setSortDescriptor(descriptor);
+    const sorted = [...configurations].sort((a, b) => {
+      let first = a[descriptor.column];
+      let second = b[descriptor.column];
+      let cmp =
+        (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+
+      if (descriptor.direction === "descending") {
+        cmp *= -1;
+      }
+
+      return cmp;
+    });
+    setSortedConfigurations(sorted);
   };
 
   const renderCell = (config, columnKey) => {
@@ -199,7 +177,6 @@ const ConfigTable = () => {
               setIsEditMode(false);
               onOpen();
             }}
-            className="text-white"
           >
             Add Configuration
           </Button>
@@ -211,9 +188,8 @@ const ConfigTable = () => {
       ) : (
         <Table
           aria-label="Configurations Table with Actions"
-          sortDescriptor={list.sortDescriptor}
-          onSortChange={list.sort}
-          className=""
+          sortDescriptor={sortDescriptor}
+          onSortChange={handleSortChange}
         >
           <TableHeader>
             <TableColumn key="buildingType" allowsSorting align="center">
@@ -229,7 +205,7 @@ const ConfigTable = () => {
               <span>Actions</span>
             </TableColumn>
           </TableHeader>
-          <TableBody items={list.items}>
+          <TableBody items={sortedConfigurations}>
             {(item) => (
               <TableRow key={item.buildingType}>
                 {[

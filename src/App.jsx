@@ -4,22 +4,30 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Auth from "./pages/Auth";
 import Main from "./pages/Main";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Documentation from "./pages/Documentation";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Auth />} />
+        <Route path="/register" element={<Auth />} />
         <Route
           path="/"
           element={
             <ProtectedRoute>
               <Main />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documentation"
+          element={
+            <ProtectedRoute>
+              <Documentation />
             </ProtectedRoute>
           }
         />

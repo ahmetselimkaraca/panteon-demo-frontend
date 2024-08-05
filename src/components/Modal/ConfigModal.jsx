@@ -11,7 +11,7 @@ import {
   SelectItem,
   Input,
 } from "@nextui-org/react";
-import { getBuildingTypes } from "../services/api";
+import { getBuildingTypes } from "../../services/api";
 import ConfigCard from "./ConfigCard";
 import ConfigSummaryModal from "./ConfigSummaryModal";
 

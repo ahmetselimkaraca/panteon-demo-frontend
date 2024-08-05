@@ -18,6 +18,21 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    } else {
+      console.error(error);
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const login = (credentials) => api.post("/auth/login", credentials);
 export const register = (credentials) =>
   api.post("/auth/register", credentials);

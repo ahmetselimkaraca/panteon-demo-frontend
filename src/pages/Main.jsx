@@ -1,5 +1,5 @@
 import React from "react";
-import ConfigTable from "../components/ConfigTable";
+import ConfigTable from "../components/Table/ConfigTable";
 
 function Main() {
   return (
