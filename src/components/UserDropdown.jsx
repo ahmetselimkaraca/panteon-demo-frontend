@@ -19,9 +19,9 @@ const UserDropdown = () => {
       <DropdownTrigger>
         <Avatar
           isBordered
-          src="https://sc-images-prod.s3.eu-central-1.amazonaws.com/logos/2c0505ba-9e55-4c5d-a11b-fc3f80fe8e0a_logo.png"
+          src="https://img.freepik.com/free-psd/3d-rendering-avatar_23-2150833560.jpg?w=740&t=st=1722840952~exp=1722841552~hmac=b442c0e3c47212fecf821a9653e27925624f043d8ef038c15774057e0faa9233"
           className="cursor-pointer"
-          size="sm"
+          size="md"
         />
       </DropdownTrigger>
       <DropdownMenu aria-label="User Actions">

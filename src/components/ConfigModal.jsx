@@ -48,7 +48,14 @@ const ConfigModal = ({
     if (isOpen && isEditMode) {
       setOriginalConfig(newConfig); // Store the original configuration when modal is opened
     }
-  }, [isOpen, isEditMode]);
+    if (isOpen && !isEditMode) {
+      setNewConfig({
+        buildingType: "",
+        buildingCost: "",
+        constructionTime: "",
+      }); // Reset newConfig to initial state
+    }
+  }, [isOpen, isEditMode, setNewConfig]);
 
   const validateBuildingCost = (value) => value > 0;
   const validateConstructionTime = (value) => value >= 30 && value <= 1800;
@@ -94,7 +101,7 @@ const ConfigModal = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {isEditMode ? "Edit Configuration" : "Add Configuration"}
+              {isEditMode ? "Edit Configuration" : "Add New Building Type"}
             </ModalHeader>
             <ModalBody>
               {isEditMode && <ConfigCard config={originalConfig} />}

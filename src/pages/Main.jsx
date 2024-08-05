@@ -1,6 +1,7 @@
 // Main.jsx
 import React from "react";
 import ConfigTable from "../components/ConfigTable";
+import TableSkeleton from "../components/TableSkeleton";
 
 function Main() {
   return (

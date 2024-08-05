@@ -19,12 +19,14 @@ import {
   updateConfiguration,
 } from "../services/api";
 import DeleteIcon from "./icons/DeleteIcon";
-import EditIcon from "./EditIcon";
+import EditIcon from "./icons/EditIcon";
 import BuildingIcon from "./icons/BuildingIcon";
 import ConfigModal from "./ConfigModal";
+import TableSkeleton from "./TableSkeleton";
 import { useDisclosure } from "@nextui-org/react";
 
 const ConfigTable = () => {
+  const [loading, setLoading] = useState(false);
   const [configurations, setConfigurations] = useState([]);
   const [newConfig, setNewConfig] = useState({
     buildingType: "",
@@ -63,13 +65,21 @@ const ConfigTable = () => {
     fetchConfigurations();
   }, []);
 
+  useEffect(() => {
+    list.reload();
+  }, [configurations]);
+
   const fetchConfigurations = async () => {
     try {
+      setLoading(true);
+      // sleep for 1 second to show skeleton loader
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const response = await getConfigurations();
       setConfigurations(response.data);
-      list.setItems(response.data);
+      setLoading(false);
     } catch (error) {
       handleAuthError(error);
+      setLoading(false);
     }
   };
 
@@ -134,12 +144,12 @@ const ConfigTable = () => {
         return `${cellValue}`;
       case "actions":
         return (
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center items-center gap-2">
             <span className="cursor-pointer" onClick={() => handleEdit(config)}>
               <EditIcon />
             </span>
             <span
-              className="text-danger cursor-pointer"
+              className=" text-danger cursor-pointer"
               onClick={() => handleDelete(config.buildingType)}
             >
               <DeleteIcon />
@@ -175,55 +185,59 @@ const ConfigTable = () => {
           <Button color="secondary">Export Data</Button>
         </div>
       </div>
-      <Table
-        aria-label="Configurations Table with Actions"
-        sortDescriptor={list.sortDescriptor}
-        onSortChange={list.sort}
-        className=""
-      >
-        <TableHeader>
-          <TableColumn key="buildingType" allowsSorting align="center">
-            <div className="flex items-center justify-center gap-1">
-              <span>Building Type</span>
-              <BuildingIcon className="text-danger" />
-            </div>
-          </TableColumn>
-          <TableColumn key="buildingCost" allowsSorting align="center">
-            <div className="flex items-center justify-center gap-1">
-              <span>Building Cost</span>
-              <BuildingIcon className="text-danger" />
-            </div>
-          </TableColumn>
-          <TableColumn key="constructionTime" allowsSorting align="center">
-            <div className="flex items-center justify-center gap-1">
-              <span>Construction Time</span>
-              <BuildingIcon className="text-danger" />
-            </div>
-          </TableColumn>
-          <TableColumn key="actions" align="center">
-            <div className="flex items-center justify-center gap-1">
-              <span>Actions</span>
-              <BuildingIcon className="text-danger" />
-            </div>
-          </TableColumn>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {(item) => (
-            <TableRow key={item.buildingType}>
-              {[
-                "buildingType",
-                "buildingCost",
-                "constructionTime",
-                "actions",
-              ].map((columnKey) => (
-                <TableCell key={columnKey} className="text-center">
-                  {renderCell(item, columnKey)}
-                </TableCell>
-              ))}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <Table
+          aria-label="Configurations Table with Actions"
+          sortDescriptor={list.sortDescriptor}
+          onSortChange={list.sort}
+          className=""
+        >
+          <TableHeader>
+            <TableColumn key="buildingType" allowsSorting align="center">
+              <div className="flex items-center justify-center gap-1">
+                <span>Building Type</span>
+                <BuildingIcon className="text-danger" />
+              </div>
+            </TableColumn>
+            <TableColumn key="buildingCost" allowsSorting align="center">
+              <div className="flex items-center justify-center gap-1">
+                <span>Building Cost</span>
+                <BuildingIcon className="text-danger" />
+              </div>
+            </TableColumn>
+            <TableColumn key="constructionTime" allowsSorting align="center">
+              <div className="flex items-center justify-center gap-1">
+                <span>Construction Time</span>
+                <BuildingIcon className="text-danger" />
+              </div>
+            </TableColumn>
+            <TableColumn key="actions" align="center">
+              <div className="flex items-center justify-center gap-1">
+                <span>Actions</span>
+                <BuildingIcon className="text-danger" />
+              </div>
+            </TableColumn>
+          </TableHeader>
+          <TableBody items={list.items}>
+            {(item) => (
+              <TableRow key={item.buildingType}>
+                {[
+                  "buildingType",
+                  "buildingCost",
+                  "constructionTime",
+                  "actions",
+                ].map((columnKey) => (
+                  <TableCell key={columnKey} className="text-center">
+                    {renderCell(item, columnKey)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
       <ConfigModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

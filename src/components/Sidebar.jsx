@@ -5,10 +5,17 @@ import HomeIcon from "./icons/HomeIcon";
 
 import SidebarItem from "./SidebarItem";
 
+import Logo from "../assets/Logo.png";
+
 const Sidebar = () => {
   return (
     <aside className="sticky top-0 h-screen w-64 flex flex-col p-4 border-r dark:border-r-foreground-100">
-      <h2 className="text-2xl font-bold mb-8">Navigation</h2>
+      <div className="flex items-center gap-4 mb-8 justify-center">
+        <Link href="/">
+          <img src={Logo} alt="Logo" className="h-10" />
+        </Link>
+        <h2 className="text-xl font-bold">Admin</h2>
+      </div>
       <nav className="flex flex-col gap-4">
         <SidebarItem icon={<HomeIcon />} title="Home" href="/" />
         <SidebarItem icon={<HomeIcon />} title="About" />
