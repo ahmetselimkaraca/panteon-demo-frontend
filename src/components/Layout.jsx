@@ -1,7 +1,6 @@
 import React from "react";
 import AppNavbar from "./Navigation/Navbar/AppNavbar";
 import Sidebar from "./Navigation/Sidebar/Sidebar";
-import Background from "../assets/background.svg";
 
 // shift the main component up 8vh to align with the navbar
 
@@ -14,7 +13,7 @@ const Layout = ({ children }) => {
         <main
           className="p-10 flex-1"
           style={{
-            backgroundImage: `url(${Background})`,
+            backgroundImage: "url(/background.svg)",
           }}
         >
           {children}

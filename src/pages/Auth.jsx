@@ -5,7 +5,6 @@ import { Input, Button, Card, CardHeader } from "@nextui-org/react";
 
 import Logo from "../assets/logo-outlined.svg";
 import SideImage from "../assets/image.png";
-import BackgroundSVG from "../assets/waves.svg";
 
 function Auth() {
   const [username, setUsername] = useState("");
@@ -85,7 +84,7 @@ function Auth() {
   return (
     <div
       className="h-screen w-screen flex items-center justify-center bg-no-repeat bg-right"
-      style={{ backgroundImage: `url(${BackgroundSVG})` }}
+      style={{ backgroundImage: "url(/waves.svg)" }}
     >
       <Card className="flex items-center justify-center p-0 w-full max-w-4xl h-auto md:h-2/3">
         <div className="flex w-full h-full">
