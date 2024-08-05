@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { login } from "../services/api";
 import { Input, Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 
+import Logo from "../assets/Logo.png";
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +34,10 @@ function Login() {
         style={{ padding: "24px", height: "64vh", width: "48vh" }}
         className="flex items-center justify-center"
       >
+        <CardHeader className="flex items-center flex-col">
+          <img src={Logo} alt="Logo" className="h-10" />
+          <h1 className="text-2xl font-bold pb-8">Panteon Admin Panel</h1>
+        </CardHeader>
         <h2 className="text-lg pb-8">Login</h2>
 
         <form className="flex gap-3 flex-col" onSubmit={handleSubmit}>
