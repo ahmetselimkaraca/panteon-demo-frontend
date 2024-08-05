@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import { getBuildingTypes } from "../services/api";
 import ConfigCard from "./ConfigCard";
+import ConfigSummaryModal from "./ConfigSummaryModal";
 
 const ConfigModal = ({
   isOpen,
@@ -30,6 +31,7 @@ const ConfigModal = ({
     constructionTime: false,
   });
   const [originalConfig, setOriginalConfig] = useState(newConfig); // Store the original configuration
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false); // State for confirmation modal
 
   useEffect(() => {
     const fetchBuildingTypes = async () => {
@@ -76,8 +78,7 @@ const ConfigModal = ({
 
   const handleAddWithValidation = async () => {
     if (handleValidation()) {
-      await handleAdd();
-      onOpenChange(false);
+      setIsConfirmationOpen(true); // Open confirmation modal
     }
   };
 
@@ -88,6 +89,12 @@ const ConfigModal = ({
     }
   };
 
+  const handleConfirmAdd = async () => {
+    await handleAdd();
+    setIsConfirmationOpen(false);
+    onOpenChange(false);
+  };
+
   // Filter out existing building types from the select options when not in edit mode
   const availableBuildingTypes = buildingTypes.filter(
     (type) =>
@@ -96,82 +103,91 @@ const ConfigModal = ({
   );
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {isEditMode ? "Edit Configuration" : "Add New Building Type"}
-            </ModalHeader>
-            <ModalBody>
-              {isEditMode && <ConfigCard config={originalConfig} />}
-              {!isEditMode && (
-                <Select
-                  label="Select a building type"
-                  className="max-w-xs"
-                  value={newConfig.buildingType}
+    <>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {isEditMode ? "Edit Configuration" : "Add New Building Type"}
+              </ModalHeader>
+              <ModalBody>
+                {isEditMode && <ConfigCard config={originalConfig} />}
+                {!isEditMode && (
+                  <Select
+                    label="Select a building type"
+                    className="max-w-xs"
+                    value={newConfig.buildingType}
+                    onChange={(e) =>
+                      setNewConfig({
+                        ...newConfig,
+                        buildingType: e.target.value,
+                      })
+                    }
+                  >
+                    {availableBuildingTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                )}
+                <Input
+                  type="number"
+                  label="Building Cost"
+                  value={newConfig.buildingCost}
+                  isInvalid={errors.buildingCost}
+                  color={errors.buildingCost ? "danger" : "default"}
+                  errorMessage="Cost must be greater than 0"
                   onChange={(e) =>
                     setNewConfig({
                       ...newConfig,
-                      buildingType: e.target.value,
+                      buildingCost: Number(e.target.value),
                     })
                   }
+                />
+                <Input
+                  type="number"
+                  label="Construction Time"
+                  value={newConfig.constructionTime}
+                  isInvalid={errors.constructionTime}
+                  color={errors.constructionTime ? "danger" : "default"}
+                  errorMessage="Time must be between 30 and 1800 seconds"
+                  onChange={(e) =>
+                    setNewConfig({
+                      ...newConfig,
+                      constructionTime: Number(e.target.value),
+                    })
+                  }
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={
+                    isEditMode
+                      ? handleUpdateWithValidation
+                      : handleAddWithValidation
+                  }
                 >
-                  {availableBuildingTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-              <Input
-                type="number"
-                label="Building Cost"
-                value={newConfig.buildingCost}
-                isInvalid={errors.buildingCost}
-                color={errors.buildingCost ? "danger" : "default"}
-                errorMessage="Cost must be greater than 0"
-                onChange={(e) =>
-                  setNewConfig({
-                    ...newConfig,
-                    buildingCost: Number(e.target.value),
-                  })
-                }
-              />
-              <Input
-                type="number"
-                label="Construction Time"
-                value={newConfig.constructionTime}
-                isInvalid={errors.constructionTime}
-                color={errors.constructionTime ? "danger" : "default"}
-                errorMessage="Time must be between 30 and 1800 seconds"
-                onChange={(e) =>
-                  setNewConfig({
-                    ...newConfig,
-                    constructionTime: Number(e.target.value),
-                  })
-                }
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
-              </Button>
-              <Button
-                color="primary"
-                onPress={
-                  isEditMode
-                    ? handleUpdateWithValidation
-                    : handleAddWithValidation
-                }
-              >
-                {isEditMode ? "Update" : "Add"}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                  {isEditMode ? "Update" : "Add"}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <ConfigSummaryModal
+        isConfirmationOpen={isConfirmationOpen}
+        setIsConfirmationOpen={setIsConfirmationOpen}
+        newConfig={newConfig}
+        handleConfirmAdd={handleConfirmAdd}
+      />
+    </>
   );
 };
 

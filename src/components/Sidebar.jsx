@@ -1,7 +1,9 @@
 // src/components/Sidebar.jsx
 import React from "react";
 import { Link } from "@nextui-org/react";
+
 import HomeIcon from "./icons/HomeIcon";
+import DocumentationIcon from "./icons/DocumentationIcon";
 
 import SidebarItem from "./SidebarItem";
 
@@ -13,12 +15,12 @@ const Sidebar = () => {
       <div className="flex items-center gap-4 mb-8 justify-center">
         <Link href="/">
           <img src={Logo} alt="Logo" className="h-10" />
+          <h2 className="text-xl font-bold text-foreground">Admin</h2>
         </Link>
-        <h2 className="text-xl font-bold">Admin</h2>
       </div>
       <nav className="flex flex-col gap-4">
         <SidebarItem icon={<HomeIcon />} title="Home" href="/" />
-        <SidebarItem icon={<HomeIcon />} title="About" />
+        <SidebarItem icon={<DocumentationIcon />} title="Documentation" />
         <SidebarItem icon={<HomeIcon />} title="Contact" />
       </nav>
     </aside>

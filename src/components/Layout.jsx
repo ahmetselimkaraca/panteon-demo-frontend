@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
       <Sidebar />
       <div className="flex-1">
         <AppNavbar />
-        <main className="p-4">{children}</main>
+        <main className="p-10">{children}</main>
       </div>
     </div>
   );

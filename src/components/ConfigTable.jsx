@@ -18,12 +18,15 @@ import {
   createConfiguration,
   updateConfiguration,
 } from "../services/api";
-import DeleteIcon from "./icons/DeleteIcon";
-import EditIcon from "./icons/EditIcon";
-import BuildingIcon from "./icons/BuildingIcon";
+
 import ConfigModal from "./ConfigModal";
+import ViewConfigModal from "./ViewConfigModal";
+import DeleteConfirmationPopover from "./DeleteConfirmationPopover";
 import TableSkeleton from "./TableSkeleton";
 import { useDisclosure } from "@nextui-org/react";
+
+import EditIcon from "./icons/EditIcon";
+import ViewIcon from "./icons/ViewIcon";
 
 const ConfigTable = () => {
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,8 @@ const ConfigTable = () => {
   });
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [viewConfig, setViewConfig] = useState(null);
 
   const list = useAsyncList({
     async load() {
@@ -73,7 +78,7 @@ const ConfigTable = () => {
     try {
       setLoading(true);
       // sleep for 1 second to show skeleton loader
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await getConfigurations();
       setConfigurations(response.data);
       setLoading(false);
@@ -132,6 +137,18 @@ const ConfigTable = () => {
     }
   };
 
+  const handleView = (config) => {
+    setViewConfig(config);
+    setIsViewOpen(true);
+  };
+
+  const handleUpdateFromView = () => {
+    setNewConfig(viewConfig);
+    setIsEditMode(true);
+    setIsViewOpen(false);
+    onOpen();
+  };
+
   const renderCell = (config, columnKey) => {
     const cellValue = config[columnKey];
 
@@ -145,15 +162,18 @@ const ConfigTable = () => {
       case "actions":
         return (
           <div className="flex justify-center items-center gap-2">
-            <span className="cursor-pointer" onClick={() => handleEdit(config)}>
-              <EditIcon />
+            <span className="cursor-pointer" onClick={() => handleView(config)}>
+              <ViewIcon />
             </span>
             <span
-              className=" text-danger cursor-pointer"
-              onClick={() => handleDelete(config.buildingType)}
+              className="cursor-pointer text-primary"
+              onClick={() => handleEdit(config)}
             >
-              <DeleteIcon />
+              <EditIcon />
             </span>
+            <DeleteConfirmationPopover
+              onConfirm={() => handleDelete(config.buildingType)}
+            />
           </div>
         );
       default:
@@ -174,11 +194,12 @@ const ConfigTable = () => {
         </div>
         <div className="flex gap-2">
           <Button
-            color="success"
+            color="primary"
             onPress={() => {
               setIsEditMode(false);
               onOpen();
             }}
+            className="text-white"
           >
             Add Configuration
           </Button>
@@ -196,28 +217,16 @@ const ConfigTable = () => {
         >
           <TableHeader>
             <TableColumn key="buildingType" allowsSorting align="center">
-              <div className="flex items-center justify-center gap-1">
-                <span>Building Type</span>
-                <BuildingIcon className="text-danger" />
-              </div>
+              <span>Building Type</span>
             </TableColumn>
             <TableColumn key="buildingCost" allowsSorting align="center">
-              <div className="flex items-center justify-center gap-1">
-                <span>Building Cost</span>
-                <BuildingIcon className="text-danger" />
-              </div>
+              <span>Building Cost</span>
             </TableColumn>
             <TableColumn key="constructionTime" allowsSorting align="center">
-              <div className="flex items-center justify-center gap-1">
-                <span>Construction Time</span>
-                <BuildingIcon className="text-danger" />
-              </div>
+              <span>Construction Time</span>
             </TableColumn>
             <TableColumn key="actions" align="center">
-              <div className="flex items-center justify-center gap-1">
-                <span>Actions</span>
-                <BuildingIcon className="text-danger" />
-              </div>
+              <span>Actions</span>
             </TableColumn>
           </TableHeader>
           <TableBody items={list.items}>
@@ -248,6 +257,15 @@ const ConfigTable = () => {
         configurations={configurations}
         isEditMode={isEditMode}
       />
+      {viewConfig && (
+        <ViewConfigModal
+          isViewOpen={isViewOpen}
+          setIsViewOpen={setIsViewOpen}
+          config={viewConfig}
+          handleDelete={handleDelete}
+          handleUpdate={handleUpdateFromView}
+        />
+      )}
     </div>
   );
 };
