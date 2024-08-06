@@ -17,6 +17,7 @@ import {
   createConfiguration,
   updateConfiguration,
 } from "../../services/api";
+import { exportToCsv } from "../../utils/exportData";
 
 import ConfigModal from "../Modal/ConfigModal";
 import ViewConfigModal from "../Modal/ViewConfigModal";
@@ -24,48 +25,57 @@ import DeleteConfirmationPopover from "./DeleteConfirmationPopover";
 import TableSkeleton from "./TableSkeleton";
 import { useDisclosure } from "@nextui-org/react";
 
+import { useAsyncList } from "@react-stately/data";
+
 import EditIcon from "../icons/EditIcon";
 import ViewIcon from "../icons/ViewIcon";
+import SearchIcon from "../icons/SearchIcon";
 
 const ConfigTable = () => {
   const [loading, setLoading] = useState(false);
-  const [configurations, setConfigurations] = useState([]);
-  const [sortedConfigurations, setSortedConfigurations] = useState([]);
-  const [sortDescriptor, setSortDescriptor] = useState({
-    column: "buildingType",
-    direction: "ascending",
-  });
   const [newConfig, setNewConfig] = useState({
     buildingType: "",
     buildingCost: "",
     constructionTime: "",
   });
+  const [searchQuery, setSearchQuery] = useState("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [viewConfig, setViewConfig] = useState(null);
 
-  const fetchConfigurations = async () => {
-    try {
+  const list = useAsyncList({
+    async load() {
       setLoading(true);
       const response = await getConfigurations();
-      setConfigurations(response.data);
-      setSortedConfigurations(response.data);
       setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchConfigurations();
-  }, []);
+      return {
+        items: response.data,
+      };
+    },
+    async sort({ items, sortDescriptor }) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp =
+            (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+
+          if (sortDescriptor.direction === "descending") {
+            cmp *= -1;
+          }
+
+          return cmp;
+        }),
+      };
+    },
+  });
 
   const handleAdd = async () => {
     try {
       await createConfiguration(newConfig);
-      fetchConfigurations(); // Fetch updated configurations
+      list.reload();
     } catch (error) {
       console.error(error);
     }
@@ -77,7 +87,7 @@ const ConfigTable = () => {
         buildingCost: newConfig.buildingCost,
         constructionTime: newConfig.constructionTime,
       });
-      fetchConfigurations(); // Fetch updated configurations
+      list.reload();
     } catch (error) {
       console.error(error);
     }
@@ -92,7 +102,7 @@ const ConfigTable = () => {
   const handleDelete = async (buildingType) => {
     try {
       await deleteConfiguration(buildingType);
-      fetchConfigurations(); // Fetch updated configurations
+      list.reload();
     } catch (error) {
       console.error(error);
     }
@@ -110,22 +120,17 @@ const ConfigTable = () => {
     onOpen();
   };
 
-  const handleSortChange = (descriptor) => {
-    setSortDescriptor(descriptor);
-    const sorted = [...configurations].sort((a, b) => {
-      let first = a[descriptor.column];
-      let second = b[descriptor.column];
-      let cmp =
-        (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-
-      if (descriptor.direction === "descending") {
-        cmp *= -1;
-      }
-
-      return cmp;
-    });
-    setSortedConfigurations(sorted);
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
   };
+
+  const handleExport = () => {
+    exportToCsv(list.items);
+  };
+
+  const filteredItems = list.items.filter((item) =>
+    item.buildingType.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderCell = (config, columnKey) => {
     const cellValue = config[columnKey];
@@ -161,13 +166,20 @@ const ConfigTable = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-4">
-          <Input placeholder="Search Configurations" clearable />
-          <Select placeholder="Filter by Type" fullWidth>
-            <SelectItem key="type1">Type 1</SelectItem>
-            <SelectItem key="type2">Type 2</SelectItem>
-            <SelectItem key="type3">Type 3</SelectItem>
+      <div className="flex justify-between mb-4 gap-2">
+        <div className="flex gap-2 max-w-96 w-2/3">
+          <Input
+            startContent={<SearchIcon />}
+            placeholder="Search Configurations"
+            clearable
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-2/3"
+          />
+          <Select placeholder="Filter" className="w-1/3">
+            <SelectItem key="filter1">Filter 1</SelectItem>
+            <SelectItem key="filter2">Filter 2</SelectItem>
+            <SelectItem key="filter3">Filter 3</SelectItem>
           </Select>
         </div>
         <div className="flex gap-2">
@@ -177,19 +189,25 @@ const ConfigTable = () => {
               setIsEditMode(false);
               onOpen();
             }}
+            className="text-white"
           >
             Add Configuration
           </Button>
-          <Button color="secondary">Export Data</Button>
+          <Button color="secondary" onClick={handleExport}>
+            Export Data
+          </Button>
         </div>
       </div>
       {loading ? (
         <TableSkeleton />
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-10 text-lg">No Configurations</div>
       ) : (
         <Table
           aria-label="Configurations Table with Actions"
-          sortDescriptor={sortDescriptor}
-          onSortChange={handleSortChange}
+          sortDescriptor={list.sortDescriptor}
+          onSortChange={list.sort}
+          className=""
         >
           <TableHeader>
             <TableColumn key="buildingType" allowsSorting align="center">
@@ -205,7 +223,7 @@ const ConfigTable = () => {
               <span>Actions</span>
             </TableColumn>
           </TableHeader>
-          <TableBody items={sortedConfigurations}>
+          <TableBody items={filteredItems}>
             {(item) => (
               <TableRow key={item.buildingType}>
                 {[
@@ -230,7 +248,7 @@ const ConfigTable = () => {
         setNewConfig={setNewConfig}
         handleAdd={handleAdd}
         handleUpdate={handleUpdate}
-        configurations={configurations}
+        configurations={list.items}
         isEditMode={isEditMode}
       />
       {viewConfig && (

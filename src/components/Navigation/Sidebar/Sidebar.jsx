@@ -5,6 +5,12 @@ import { Link } from "react-router-dom";
 
 import HomeIcon from "../../icons/HomeIcon";
 import DocumentationIcon from "../../icons/DocumentationIcon";
+import UserManagementIcon from "../../icons/UserManagementIcon";
+import GameSettingsIcon from "../../icons/GameSettingsIcon";
+import ReportsIcon from "../../icons/ReportsIcon";
+import FeedbackIcon from "../../icons/FeedbackIcon";
+import SupportIcon from "../../icons/SupportIcon";
+import ContactIcon from "../../icons/ContactIcon";
 
 import SidebarItem from "./SidebarItem";
 
@@ -26,7 +32,12 @@ const Sidebar = () => {
           title="Documentation"
           href="/documentation"
         />
-        <SidebarItem icon={<HomeIcon />} title="Contact" />
+        <SidebarItem icon={<UserManagementIcon />} title="User Manager" />
+        <SidebarItem icon={<GameSettingsIcon />} title="Game Settings" />
+        <SidebarItem icon={<ReportsIcon />} title="Reports" href="/reports" />
+        <SidebarItem icon={<FeedbackIcon />} title="Feedback" />
+        <SidebarItem icon={<SupportIcon />} title="Support" />
+        <SidebarItem icon={<ContactIcon />} title="Contact" />
       </nav>
     </aside>
   );

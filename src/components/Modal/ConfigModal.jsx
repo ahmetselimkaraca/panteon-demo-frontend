@@ -1,5 +1,4 @@
-// src/components/ConfigModal.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Modal,
   ModalContent,
@@ -32,8 +31,12 @@ const ConfigModal = ({
   });
   const [originalConfig, setOriginalConfig] = useState(newConfig); // Store the original configuration
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false); // State for confirmation modal
+  const fetchRef = useRef(false); // Ref to track if fetch has been called
 
   useEffect(() => {
+    if (fetchRef.current) return; // Skip if already fetched
+    fetchRef.current = true; // Mark as fetched
+
     const fetchBuildingTypes = async () => {
       try {
         const response = await getBuildingTypes();
@@ -97,9 +100,7 @@ const ConfigModal = ({
 
   // Filter out existing building types from the select options when not in edit mode
   const availableBuildingTypes = buildingTypes.filter(
-    (type) =>
-      !configurations.some((config) => config.buildingType === type) ||
-      isEditMode
+    (type) => !configurations.some((config) => config.buildingType === type)
   );
 
   return (
@@ -108,15 +109,14 @@ const ConfigModal = ({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                {isEditMode ? "Edit Configuration" : "Add New Building Type"}
+              <ModalHeader>
+                {isEditMode ? "Edit Configuration" : "Add Configuration"}
               </ModalHeader>
               <ModalBody>
                 {isEditMode && <ConfigCard config={originalConfig} />}
                 {!isEditMode && (
                   <Select
                     label="Select a building type"
-                    className="max-w-xs"
                     value={newConfig.buildingType}
                     onChange={(e) =>
                       setNewConfig({
@@ -124,6 +124,7 @@ const ConfigModal = ({
                         buildingType: e.target.value,
                       })
                     }
+                    className="mb-2"
                   >
                     {availableBuildingTypes.map((type) => (
                       <SelectItem key={type} value={type}>

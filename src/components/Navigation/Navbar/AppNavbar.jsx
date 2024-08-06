@@ -25,7 +25,7 @@ const AppNavbar = () => {
             <Input
               startContent={<SearchIcon />}
               clearable
-              placeholder="Search..."
+              placeholder="Search"
               className="hidden sm:flex"
             />
           </NavbarItem>
