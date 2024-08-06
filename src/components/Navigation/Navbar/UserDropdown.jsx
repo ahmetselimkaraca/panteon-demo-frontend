@@ -1,4 +1,3 @@
-// src/components/UserDropdown.jsx
 import React from "react";
 import {
   Dropdown,

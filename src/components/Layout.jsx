@@ -2,8 +2,6 @@ import React from "react";
 import AppNavbar from "./Navigation/Navbar/AppNavbar";
 import Sidebar from "./Navigation/Sidebar/Sidebar";
 
-// shift the main component up 8vh to align with the navbar
-
 const Layout = ({ children }) => {
   return (
     <div className="flex h-full">

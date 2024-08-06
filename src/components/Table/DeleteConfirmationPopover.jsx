@@ -1,4 +1,3 @@
-// src/components/DeleteConfirmationPopover.jsx
 import React, { useState } from "react";
 import {
   Popover,

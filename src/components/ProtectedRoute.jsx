@@ -1,7 +1,6 @@
-// src/components/ProtectedRoute.js
 import React from "react";
 import { Navigate } from "react-router-dom";
-import Layout from "./Layout"; // Ensure you import the Layout component
+import Layout from "./Layout";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");

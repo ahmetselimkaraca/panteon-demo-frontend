@@ -1,6 +1,4 @@
-// src/components/Sidebar.jsx
 import React from "react";
-// import { Link } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 
 import HomeIcon from "../../icons/HomeIcon";

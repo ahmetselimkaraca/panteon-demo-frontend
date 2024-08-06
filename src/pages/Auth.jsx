@@ -11,7 +11,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [loginError, setLoginError] = useState(""); // State for login error message
+  const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const isRegisterMode = location.pathname === "/register";
@@ -25,7 +25,7 @@ function Auth() {
 
   useEffect(() => {
     setErrors({});
-    setLoginError(""); // Clear login error message when switching between login and register
+    setLoginError("");
   }, [location.pathname]);
 
   const validatePassword = (password) => {

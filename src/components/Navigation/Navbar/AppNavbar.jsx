@@ -36,7 +36,10 @@ const AppNavbar = () => {
           <BellIcon />
         </NavbarItem>
         <NavbarItem className="mt-[0.438rem]">
-          <Link href="https://github.com" className="text-foreground">
+          <Link
+            href="https://github.com/ahmetselimkaraca/panteon-demo-frontend"
+            className="text-foreground"
+          >
             <GithubIcon />
           </Link>
         </NavbarItem>

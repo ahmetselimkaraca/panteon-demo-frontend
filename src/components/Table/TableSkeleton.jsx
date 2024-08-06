@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Skeleton } from "@nextui-org/react";
 
-export default function TableSkeleton() {
+const TableSkeleton = () => {
   var blockCount = 5;
 
   return (
@@ -27,4 +27,6 @@ export default function TableSkeleton() {
       ))}
     </Card>
   );
-}
+};
+
+export default TableSkeleton;

@@ -1,4 +1,3 @@
-// src/pages/Documentation.jsx
 import React from "react";
 
 const Documentation = () => {

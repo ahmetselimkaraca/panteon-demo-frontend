@@ -1,5 +1,3 @@
-// src/utils/exportData.js
-
 export const exportToCsv = (data, filename = "configurations.csv") => {
   if (!data || !data.length) {
     return;
@@ -17,15 +15,17 @@ export const exportToCsv = (data, filename = "configurations.csv") => {
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-
-  link.setAttribute("href", url);
-  link.setAttribute("download", filename);
-  link.style.visibility = "hidden";
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    console.error("File download not supported by this browser.");
+  }
 };
 
 const replacer = (key, value) => (value === null ? "" : value);

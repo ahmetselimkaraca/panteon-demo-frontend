@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Switch } from "@nextui-org/react";
-import { ThemeContext } from "../../../ThemeProvider"; // Update with your file path
+import { ThemeContext } from "../../../ThemeProvider";
 import MoonIcon from "../../icons/MoonIcon";
 import SunIcon from "../../icons/SunIcon";
 

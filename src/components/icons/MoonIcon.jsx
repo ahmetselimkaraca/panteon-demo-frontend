@@ -1,4 +1,3 @@
-import React from "react";
 const MoonIcon = (props) => (
   <svg
     aria-hidden="true"

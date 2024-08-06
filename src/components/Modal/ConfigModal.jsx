@@ -29,13 +29,13 @@ const ConfigModal = ({
     buildingCost: false,
     constructionTime: false,
   });
-  const [originalConfig, setOriginalConfig] = useState(newConfig); // Store the original configuration
-  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false); // State for confirmation modal
-  const fetchRef = useRef(false); // Ref to track if fetch has been called
+  const [originalConfig, setOriginalConfig] = useState(newConfig);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const fetchRef = useRef(false);
 
   useEffect(() => {
-    if (fetchRef.current) return; // Skip if already fetched
-    fetchRef.current = true; // Mark as fetched
+    if (fetchRef.current) return;
+    fetchRef.current = true;
 
     const fetchBuildingTypes = async () => {
       try {
@@ -51,14 +51,14 @@ const ConfigModal = ({
 
   useEffect(() => {
     if (isOpen && isEditMode) {
-      setOriginalConfig(newConfig); // Store the original configuration when modal is opened
+      setOriginalConfig(newConfig);
     }
     if (isOpen && !isEditMode) {
       setNewConfig({
         buildingType: "",
         buildingCost: "",
         constructionTime: "",
-      }); // Reset newConfig to initial state
+      });
     }
   }, [isOpen, isEditMode, setNewConfig]);
 
@@ -81,7 +81,7 @@ const ConfigModal = ({
 
   const handleAddWithValidation = async () => {
     if (handleValidation()) {
-      setIsConfirmationOpen(true); // Open confirmation modal
+      setIsConfirmationOpen(true);
     }
   };
 
@@ -98,7 +98,6 @@ const ConfigModal = ({
     onOpenChange(false);
   };
 
-  // Filter out existing building types from the select options when not in edit mode
   const availableBuildingTypes = buildingTypes.filter(
     (type) => !configurations.some((config) => config.buildingType === type)
   );
