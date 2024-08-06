@@ -7,15 +7,19 @@ import Logo from "../assets/logo-outlined.svg";
 import SideImage from "../assets/image.png";
 
 function Auth() {
+  // State variables to manage input fields and error messages
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loginError, setLoginError] = useState("");
+
+  // Hooks for navigation and location
   const navigate = useNavigate();
   const location = useLocation();
   const isRegisterMode = location.pathname === "/register";
 
+  // Check if the user is already logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -23,20 +27,24 @@ function Auth() {
     }
   }, [navigate]);
 
+  // Reset errors when the route changes
   useEffect(() => {
     setErrors({});
     setLoginError("");
   }, [location.pathname]);
 
+  // Password validation function
   const validatePassword = (password) => {
     const passwordRequirements =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
     return passwordRequirements.test(password);
   };
 
+  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isRegisterMode) {
+      // Validate password if in register mode
       if (!validatePassword(password)) {
         setErrors({
           password:
@@ -51,6 +59,7 @@ function Auth() {
         await register({ username, email, password });
         navigate("/login");
       } catch (error) {
+        // Handle registration errors
         if (error.response && error.response.data) {
           const errorMessages = error.response.data.reduce((acc, err) => {
             if (err.code === "DuplicateUserName") {
@@ -67,6 +76,7 @@ function Auth() {
         }
       }
     } else {
+      // Handle login errors
       try {
         const response = await login({ username, password });
         localStorage.setItem("token", response.data);

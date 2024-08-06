@@ -9,8 +9,10 @@ import {
 import DeleteIcon from "../icons/DeleteIcon";
 
 const DeleteConfirmationPopover = ({ onConfirm }) => {
+  // State to manage the visibility of the popover
   const [isOpen, setIsOpen] = useState(false);
 
+  // Function to handle the confirm action and close the popover
   const handleConfirm = () => {
     onConfirm();
     setIsOpen(false);
@@ -18,15 +20,15 @@ const DeleteConfirmationPopover = ({ onConfirm }) => {
 
   return (
     <Popover
-      placement="left"
-      showArrow
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
+      placement="left" // Position of the popover
+      showArrow // Display an arrow on the popover
+      isOpen={isOpen} // Control the open state of the popover
+      onOpenChange={setIsOpen} // Callback to change the open state
     >
       <PopoverTrigger>
         <span
           className="text-danger cursor-pointer"
-          onClick={() => setIsOpen(true)}
+          onClick={() => setIsOpen(true)} // Open the popover when clicked
         >
           <DeleteIcon />
         </span>

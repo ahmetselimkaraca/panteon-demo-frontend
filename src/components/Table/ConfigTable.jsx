@@ -32,6 +32,7 @@ import ViewIcon from "../icons/ViewIcon";
 import SearchIcon from "../icons/SearchIcon";
 
 const ConfigTable = () => {
+  // State variables for loading, new configuration, search query, and view/edit modals
   const [loading, setLoading] = useState(false);
   const [newConfig, setNewConfig] = useState({
     buildingType: "",
@@ -44,6 +45,7 @@ const ConfigTable = () => {
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [viewConfig, setViewConfig] = useState(null);
 
+  // useAsyncList hook for managing configurations data
   const list = useAsyncList({
     async load() {
       setLoading(true);
@@ -72,6 +74,7 @@ const ConfigTable = () => {
     },
   });
 
+  // Handle adding a new configuration
   const handleAdd = async () => {
     try {
       await createConfiguration(newConfig);
@@ -81,6 +84,7 @@ const ConfigTable = () => {
     }
   };
 
+  // Handle updating an existing configuration
   const handleUpdate = async () => {
     try {
       await updateConfiguration(newConfig.buildingType, {
@@ -93,12 +97,14 @@ const ConfigTable = () => {
     }
   };
 
+  // Handle editing an existing configuration
   const handleEdit = (config) => {
     setNewConfig(config);
     setIsEditMode(true);
     onOpen();
   };
 
+  // Handle deleting a configuration
   const handleDelete = async (buildingType) => {
     try {
       await deleteConfiguration(buildingType);
@@ -108,11 +114,13 @@ const ConfigTable = () => {
     }
   };
 
+  // Handle viewing a configuration
   const handleView = (config) => {
     setViewConfig(config);
     setIsViewOpen(true);
   };
 
+  // Handle updating from the view modal
   const handleUpdateFromView = () => {
     setNewConfig(viewConfig);
     setIsEditMode(true);
@@ -120,18 +128,22 @@ const ConfigTable = () => {
     onOpen();
   };
 
+  // Handle search input change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
+  // Handle exporting data to CSV
   const handleExport = () => {
     exportToCsv(list.items);
   };
 
+  // Filter configurations based on search query
   const filteredItems = list.items.filter((item) =>
     item.buildingType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Render a table cell based on column key
   const renderCell = (config, columnKey) => {
     const cellValue = config[columnKey];
 
@@ -189,7 +201,6 @@ const ConfigTable = () => {
               setIsEditMode(false);
               onOpen();
             }}
-            className="text-white"
           >
             Add Configuration
           </Button>

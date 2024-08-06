@@ -14,25 +14,32 @@ import { getBuildingTypes } from "../../services/api";
 import ConfigCard from "./ConfigCard";
 import ConfigSummaryModal from "./ConfigSummaryModal";
 
+// ConfigModal component handles both adding and editing configurations
 const ConfigModal = ({
-  isOpen,
-  onOpenChange,
-  newConfig,
-  setNewConfig,
-  handleAdd,
-  handleUpdate,
-  configurations,
-  isEditMode,
+  isOpen, // Boolean to control if the modal is open
+  onOpenChange, // Function to toggle the modal open state
+  newConfig, // The new or existing configuration being edited
+  setNewConfig, // Function to update the newConfig state
+  handleAdd, // Function to handle adding a new configuration
+  handleUpdate, // Function to handle updating an existing configuration
+  configurations, // List of existing configurations
+  isEditMode, // Boolean to determine if the modal is in edit mode
 }) => {
+  // State for storing building types fetched from the API
   const [buildingTypes, setBuildingTypes] = useState([]);
+  // State for storing validation errors
   const [errors, setErrors] = useState({
     buildingCost: false,
     constructionTime: false,
   });
+  // State to keep a copy of the original configuration before editing
   const [originalConfig, setOriginalConfig] = useState(newConfig);
+  // State to control the confirmation modal for adding a new configuration
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  // Ref to prevent multiple fetch calls for building types
   const fetchRef = useRef(false);
 
+  // Fetch building types once when the component is mounted
   useEffect(() => {
     if (fetchRef.current) return;
     fetchRef.current = true;
@@ -49,6 +56,7 @@ const ConfigModal = ({
     fetchBuildingTypes();
   }, []);
 
+  // Reset the configuration states based on whether the modal is in edit mode or not
   useEffect(() => {
     if (isOpen && isEditMode) {
       setOriginalConfig(newConfig);
@@ -62,9 +70,11 @@ const ConfigModal = ({
     }
   }, [isOpen, isEditMode, setNewConfig]);
 
+  // Validation functions for building cost and construction time
   const validateBuildingCost = (value) => value > 0;
   const validateConstructionTime = (value) => value >= 30 && value <= 1800;
 
+  // Function to validate the configuration inputs
   const handleValidation = () => {
     const isValidBuildingCost = validateBuildingCost(newConfig.buildingCost);
     const isValidConstructionTime = validateConstructionTime(
@@ -79,12 +89,14 @@ const ConfigModal = ({
     return isValidBuildingCost && isValidConstructionTime;
   };
 
+  // Handle adding a new configuration with validation
   const handleAddWithValidation = async () => {
     if (handleValidation()) {
       setIsConfirmationOpen(true);
     }
   };
 
+  // Handle updating an existing configuration with validation
   const handleUpdateWithValidation = async () => {
     if (handleValidation()) {
       await handleUpdate();
@@ -92,12 +104,14 @@ const ConfigModal = ({
     }
   };
 
+  // Confirm adding a new configuration
   const handleConfirmAdd = async () => {
     await handleAdd();
     setIsConfirmationOpen(false);
     onOpenChange(false);
   };
 
+  // Filter out building types that are already used in existing configurations
   const availableBuildingTypes = buildingTypes.filter(
     (type) => !configurations.some((config) => config.buildingType === type)
   );

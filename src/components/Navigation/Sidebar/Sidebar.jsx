@@ -14,22 +14,29 @@ import SidebarItem from "./SidebarItem";
 
 import Logo from "../../../assets/logo-outlined.svg";
 
+// Sidebar component for the admin panel
 const Sidebar = () => {
   return (
+    // Sticky sidebar that spans the height of the screen
     <aside className="sticky top-0 h-screen w-64 flex flex-col p-4 border-r dark:border-r-foreground-100">
+      {/* Link to the homepage */}
       <Link to="/">
         <div className="flex items-center justify-center gap-4 mb-8">
-          <img src={Logo} alt="Logo" className="h-10" />
-          <h2 className="text-xl font-bold text-foreground">Admin</h2>
+          <img src={Logo} alt="Logo" className="h-10" /> {/* Logo image */}
+          <h2 className="text-xl font-bold text-foreground">Admin</h2> {/* Admin title */}
         </div>
       </Link>
+      {/* Navigation items */}
       <nav className="flex flex-col gap-4">
+        {/* Home page link */}
         <SidebarItem icon={<HomeIcon />} title="Home" href="/" />
+        {/* Documentation page link */}
         <SidebarItem
           icon={<DocumentationIcon />}
           title="Documentation"
           href="/documentation"
         />
+        {/* Additional sidebar items */}
         <SidebarItem icon={<UserManagementIcon />} title="User Manager" />
         <SidebarItem icon={<GameSettingsIcon />} title="Game Settings" />
         <SidebarItem icon={<ReportsIcon />} title="Reports" href="/reports" />

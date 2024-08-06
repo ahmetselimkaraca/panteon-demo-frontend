@@ -1,8 +1,22 @@
-# React + Vite
+# Frontend for Panteon Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for my admin panel project.
+Built using React + [Vite](https://vitejs.dev/)
+Used [TailwindCSS](https://tailwindcss.com/) and [NextUI](https://nextui.org/) UI library.
 
-Currently, two official plugins are available:
+The build is included in the repo, as I faced issues with building on my t2.micro instance.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Running and building
+
+Ensure that your API host is configured correctly in `vite.config.js`.
+
+To run the application:
+
+    npm install
+    npm run dev
+
+To build the application and run the build:
+
+    npm install
+    npm run build
+    npm run preview
